@@ -117,7 +117,7 @@ def setup_gui():
 
 
 joints = ['Base [q,a]', 'Shoulder [w,s]', 'Elbow [e,d]', 'Wrist [r,f]', 'Wrist rotation [t,g]', 'Gripper [y,h]']
-home = Position(90, 90, 90, 90, 90, 72)
+home = Position(90, 70, 90, 90, 90, 72)
 positions = [copy.deepcopy(home), None, None, None, None, None, None, None, None, None]
 current_position = 0
 last_position = 0
@@ -129,5 +129,5 @@ port = input("Enter serial port: ")
 robot = Braccio(port)
 robot.move_to_position(home, 100)
 setup_gui()
-robot.move_to_position(home, 100)
+
 robot.power_off()

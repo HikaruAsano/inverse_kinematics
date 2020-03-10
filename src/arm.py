@@ -9,23 +9,40 @@ class Arm():
             self.l.append(length[i])
         
         self.th=np.zeros(self.n_part)
-        self.actions=np.array([[0.5,0,0],[0,0.5,0],[0,0,0.5],[-0.5,0.,0],[0.,-0.5,0],[0,0,-0.5]])
+        self.actions=np.array([[np.pi/1000,0,0,0],[0,np.pi/1000,0,0],[0,0,np.pi/1000,0],[-np.pi/1000,0.,0,0],[0.,-np.pi/1000,0,0],[0,0,-np.pi/1000,0],[0,0,0,np.pi/1000],[0,0,0,-np.pi/1000]])
         self.action_space_d=spaces.Discrete(self.actions.shape[0])
-        self.goal=np.array([np.sum(length)*np.random.random(),np.sum(length)*np.random.random()])
-
+        pi=np.random.random()
+        self.goal=np.array([np.sum(length)*(np.cos(pi*2*np.pi)),np.sum(length)*(np.sin(pi*2*np.pi))])
+        self.state=np.concatenate([self.th, self.goal], 0)
+ 
     def reset(self):
-        self.goal=np.array([np.sum(self.l)*np.random.random(),np.sum(self.l)*np.random.random()])
-        return np.zeros(self.n_part)
+        pi=np.random.random()
+        self.goal=np.array([np.sum(self.l)*(np.cos(pi*2*np.pi)),np.sum(self.l)*(np.cos(pi*2*np.pi))])
+        self.th=np.zeros(self.n_part)
+        return np.concatenate([self.th, self.goal], 0)
 
     def random_action(self):
-        i=np.random.randint(0,self.actions.shape[0])
-        return  list(self.actions[i])
+        return np.random.randint(0,self.actions.shape[0])
+        
+    def forward(self):
+        pos=np.zeros((self.n_part,2))
+        x=0
+        y=0
+        j=0
+        for i in range(self.n_part):  
+            j=i+1       
+            x+=self.l[i]*np.cos( np.sum(self.th[:j]) )
+            y+=self.l[i]*np.sin( np.sum(self.th[:j]) )
+            pos[i,0]=x
+            pos[i,1]=y
+        return pos
 
     def step(self,act):
-        self.th+=act
+        self.th+=self.actions[act]
         reward=self.reward(act)
         done=self.is_end()
-        return self.th,reward,done
+        self.state=np.concatenate([self.th, self.goal], 0)
+        return self.state,reward,done
 
     def cal_dif(self):
         x=0
@@ -38,14 +55,20 @@ class Arm():
         return x_error*x_error+y_error*y_error
     
     def reward(self,act):
+        reward=0
         error=self.cal_dif()
-        return -error  #目的関数は最大化するためマイナスをかけている
+        if error < 0.1:
+            return 1
+        if error < 0.05:
+            return 5
+        if error < 0.01:
+            return 10
+        else:
+             return - error
 
     def is_end(self):
         error=self.cal_dif()
-        if error<0.3:
+        if error<0.01:
             return True
         else:
             return False
-
-   
