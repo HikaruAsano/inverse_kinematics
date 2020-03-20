@@ -27,8 +27,8 @@ class Arm():
                 for j in range(i):
                     self.cord[i,0]+=self.l[j+1]*np.cos(np.pi*(np.sum(self.angles[1:(j+2)])/180))
                     self.cord[i,1]+=self.l[j+1]*np.sin(np.pi*(np.sum(self.angles[1:(j+2)])/180))
-                    print(np.sum(self.angles[1:(j+2)]))
-                    print(self.l[j+1])
+                    ##print(np.sum(self.angles[1:(j+2)]))
+                    ##print(self.l[j+1])
             elif i==5:
                 self.cord[i,0]=copy.copy(self.cord[4][0])
                 self.cord[i,1]=copy.copy(self.cord[4][1])
@@ -36,19 +36,19 @@ class Arm():
             elif i==6:
                 self.cord[i][0]=copy.copy(self.cord[5][0])
                 self.cord[i][1]=copy.copy(self.cord[5][1])
-                print("88888888")
-                print(self.cord[i][0])
-                print(self.cord[i][1])
+                #print("88888888")
+                #print(self.cord[i][0])
+                #print(self.cord[i][1])
                 self.cord[i][2]=52
                 th=self.angles[1:]
                 th=np.sum(th)
-                print(th)
+                #print(th)
                 th=(th-90)
-                print(th)
+                #print(th)
                 th=th*np.pi/180
                 self.cord[i,0]+=self.l[i]*np.cos(th)
                 self.cord[i,1]+=self.l[i]*np.sin(th)
-            print()
+            #print()
 
         for i in range(1,7):
             self.cord[i,1]+=77
